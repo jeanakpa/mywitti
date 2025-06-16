@@ -61,9 +61,9 @@ def create_app():
     app.register_blueprint(survey_bp, url_prefix='/survey')
 
     # Route pour servir les images
-    @app.route('/media/<path:filename>')
-    def serve_media(filename):
-        return send_from_directory('media', filename)
+    @app.route('/static/uploads/<path:filename>')
+    def serve_uploaded_file(filename):
+        return send_from_directory('/static/uploads', filename)
 
     # Enregistrer les visites de pages
     @app.before_request

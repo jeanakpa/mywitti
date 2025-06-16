@@ -32,10 +32,10 @@ update_status_model_def = referral_ns.model('UpdateStatus', update_status_model)
 ReferralManagementResource.get = referral_ns.marshal_with(referral_model_def, as_list=True, envelope='referrals')(ReferralManagementResource.get)
 ReferralManagementResource.put = referral_ns.expect(update_status_model_def)(ReferralManagementResource.put)
 
-# Importation différée de AdminNotifications
+# Importation différée de AdminNotifications et AdminNotificationDetail
 def import_notifications():
-    from .resources.notifications import AdminNotifications
-    return AdminNotifications
+    from .resources.notifications import AdminNotifications, AdminNotificationDetail
+    return AdminNotifications, AdminNotificationDetail
 
 # Enregistrer les ressources
 api.add_resource(AdminLogin, '/login')
@@ -53,7 +53,12 @@ api.add_resource(AdminOrders, '/orders')
 api.add_resource(AdminOrderDetail, '/orders/<int:order_id>')
 api.add_resource(ValidateOrder, '/orders/<int:order_id>/validate')
 api.add_resource(CancelOrder, '/orders/<int:order_id>/cancel')
-api.add_resource(import_notifications(), '/notifications')  # Utiliser la fonction pour l'importation différée
+
+# Utiliser la fonction pour l'importation différée
+AdminNotifications, AdminNotificationDetail = import_notifications()
+api.add_resource(AdminNotifications, '/notifications')
+api.add_resource(AdminNotificationDetail, '/notifications/<int:notification_id>')  # Supporte maintenant DELETE et PATCH
+
 api.add_resource(AdminSurveys, '/surveys')
 api.add_resource(AdminSurvey, '/surveys/<int:survey_id>')
 api.add_resource(SurveyResults, '/surveys/<int:survey_id>/results')
